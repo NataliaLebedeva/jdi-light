@@ -5,6 +5,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import static io.github.com.StaticSite.bsFormsPage;
+import static io.github.com.pages.BootstrapFormsPage.lastLogEntry;
 import static io.github.com.pages.BootstrapFormsPage.supportMessageForm;
 import static io.github.epam.html.tests.elements.BaseValidations.baseValidation;
 import static io.github.epam.html.tests.site.steps.States.shouldBeLoggedIn;
