@@ -9,6 +9,8 @@ import static io.github.com.pages.BootstrapFormsPage.lastLogEntry;
 import static io.github.com.pages.BootstrapFormsPage.supportMessageForm;
 import static io.github.epam.html.tests.elements.BaseValidations.baseValidation;
 import static io.github.epam.html.tests.site.steps.States.shouldBeLoggedIn;
+import static io.github.epam.test.data.SupportMessages.EXAMPLE_MESSAGE;
+import static io.github.epam.test.data.SupportMessages.TEMPLATE_MESSAGE;
 import static org.hamcrest.Matchers.containsString;
 
 public class BootstrapFormTests implements TestsInit {
