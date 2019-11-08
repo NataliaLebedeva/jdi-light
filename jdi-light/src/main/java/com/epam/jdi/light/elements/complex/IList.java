@@ -1,16 +1,13 @@
 package com.epam.jdi.light.elements.complex;
 
-/**
- * Created by Roman Iovlev on 14.02.2018
- * Email: roman.iovlev.jdi@gmail.com; Skype: roman.iovlev
- */
-
 import com.epam.jdi.light.elements.interfaces.base.HasValue;
 import com.epam.jdi.light.elements.interfaces.base.IBaseElement;
 import com.epam.jdi.tools.LinqUtils;
 import com.epam.jdi.tools.func.JAction1;
 import com.epam.jdi.tools.func.JFunc1;
 import com.epam.jdi.tools.map.MapArray;
+import com.epam.jdi.tools.map.MultiMap;
+import com.epam.jdi.tools.pairs.Pair;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.Collection;
@@ -21,61 +18,72 @@ import java.util.ListIterator;
 import static com.epam.jdi.light.common.Exceptions.exception;
 import static com.epam.jdi.light.common.Exceptions.safeException;
 import static com.epam.jdi.tools.EnumUtils.getEnumValue;
+import static com.epam.jdi.tools.LinqUtils.any;
 
+/**
+ * Created by Roman Iovlev on 14.02.2018
+ * Email: roman.iovlev.jdi@gmail.com; Skype: roman.iovlev
+ */
 public interface IList<T> extends IBaseElement, List<T>, HasValue, IHasSize {
     /**
      *  Get all application elements
      *  */
-    MapArray<String, T> elements(int minAmount);
+    MultiMap<String, T> elements(int minAmount);
     T get(String value);
 
     default T get(Enum name) { return get(getEnumValue(name)); }
     default T last() {
-        return elements(1).values().get(size()-1);
+        return elements(1).last().value;
     }
-    default T first() { return elements(1).values().get(0); }
+    default T first() { return elements(1).first().value; }
     default List<T> where(JFunc1<T, Boolean> condition) {
-        return LinqUtils.where(elements(0).values(),condition);
+        return elements(0).values(condition);
     }
     default List<T> filter(JFunc1<T, Boolean> condition) {
         return where(condition);
     }
     default <R> List<R> select(JFunc1<T, R> transform) {
-        return LinqUtils.select(elements(0).values(), transform);
+        return elements(0).select((k,v) -> transform.execute(v));
     }
     default <R> List<R> map(JFunc1<T, R> transform) {
         return select(transform);
     }
     default T first(JFunc1<T, Boolean> condition) {
-        return LinqUtils.first(elements(1).values(), condition);
+        return elements(1).first((k,v) -> condition.execute(v)).value;
     }
     default T last(JFunc1<T, Boolean> condition) {
-        return LinqUtils.last(elements(1).values(), condition);
+        return elements(1).last((k,v) -> condition.execute(v)).value;
     }
     default void ifDo(JFunc1<T, Boolean> condition, JAction1<T> action) {
-        LinqUtils.ifDo(elements(1).values(), condition, action);
+        elements(1).ifDo(p -> condition.execute(p.value), action::execute);
     }
     default <R> List<R> ifSelect(JFunc1<T, Boolean> condition, JFunc1<T, R> transform) {
-        return LinqUtils.ifSelect(elements(0).values(), condition, transform);
+        return elements(0).ifSelect((k,v) -> condition.execute(v), transform);
     }
     default void foreach(JAction1<T> action) {
-        LinqUtils.foreach(elements(0).values(), action);
+        elements(0).foreach((k,v) -> action.execute(v));
     }
     default boolean hasAny(JFunc1<T, Boolean> condition) {
         return elements(0).any(condition);
     }
+    default boolean hasAnyKey(JFunc1<String, Boolean> condition) {
+        return LinqUtils.any(elements(0).keys(), condition);
+    }
     default boolean all(JFunc1<T, Boolean> condition) {
-        return LinqUtils.all(elements(0).values(), condition);
+        return elements(0).all(condition);
+    }
+    default List<T> slice(int from, int to) {
+        return elements(to).slice(from, to).values();
     }
     default List<T> slice(int from) {
-        return slice(from, elements(from).size() - 1);
+        return elements(from).slice(from).values();
+    }
+    default List<T> sliceTo(int to) {
+        return elements(to).sliceTo(to).values();
     }
     default void refresh() { clear(); }
-    default List<T> slice(int from, int to) {
-        return LinqUtils.listCopy(elements(to).values(), from, to);
-    }
     default <R> List<R> selectMany(JFunc1<T, List<R>> func) {
-        return LinqUtils.selectMany(elements(0).values(), func);
+        return elements(0).selectMany((k,v) -> func.execute(v));
     }
     @Override
     default int size() {
@@ -134,7 +142,8 @@ public interface IList<T> extends IBaseElement, List<T>, HasValue, IHasSize {
     }
     @Override
     default T get(int index) {
-        return elements(index).values().get(index);
+        Pair<String, T> result = elements(index).get(index);
+        return result != null ? result.value : null;
     }
     @Override
     default T set(int index, T element) {
@@ -146,10 +155,7 @@ public interface IList<T> extends IBaseElement, List<T>, HasValue, IHasSize {
     }
     @Override
     default T remove(int index) {
-        MapArray<String, T> els = elements(index);
-        T element = els.values().get(index);
-        els.remove(index);
-        return element;
+        return elements(index).removeByIndex(index).value;
     }
     @Override
     default int indexOf(Object o) {

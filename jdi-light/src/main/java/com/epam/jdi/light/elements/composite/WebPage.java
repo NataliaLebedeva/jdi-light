@@ -49,14 +49,13 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
  * Created by Roman Iovlev on 25.03.2018
  * Email: roman.iovlev.jdi@gmail.com; Skype: roman.iovlev
  */
-
 public class WebPage extends DriverBase implements PageObject {
     public String url = "";
     public String title = "";
 
     public String checkUrl;
     public CheckTypes checkUrlType = CONTAINS;
-    public CheckTypes checkTitleType = CheckTypes.NONE;
+    public CheckTypes checkTitleType = NONE;
 
     public <T> Form<T> asForm() {
         return new Form<>().setPageObject(this).setup(Form.class,e->e.setName(getName()+" Form"));
@@ -77,6 +76,10 @@ public class WebPage extends DriverBase implements PageObject {
     public WebPage(String url, String title) { this(url); this.title = title; }
     public static void openUrl(String url) {
         new WebPage(url).open();
+    }
+    public static void openSite() {
+        init();
+        new WebPage(getDomain()).open();
     }
 
     /**
@@ -109,11 +112,12 @@ public class WebPage extends DriverBase implements PageObject {
         } else if (validate == null) checkUrlType = MATCH;
         if (!uri.contains("://"))
             url = getUrlFromUri(uri);
-        else  { if (isBlank(uri)) url = DOMAIN; }
+        else  { if (isBlank(uri)) url = getDomain(); }
     }
     public void updatePageData(Url urlAnnotation, Title titleAnnotation) {
         if (urlAnnotation != null)
             setUrl(urlAnnotation.value(), urlAnnotation.template(), urlAnnotation.validate());
+        else setUrl(getDomain());
         if (titleAnnotation != null) {
             title = titleAnnotation.value();
             checkTitleType = titleAnnotation.validate();
@@ -134,6 +138,7 @@ public class WebPage extends DriverBase implements PageObject {
      */
     @JDIAction("Open '{name}'(url={0})")
     private void open(String url) {
+        init();
         CacheValue.reset();
         driver().navigate().to(url);
         setCurrentPage(this);
@@ -173,7 +178,7 @@ public class WebPage extends DriverBase implements PageObject {
 
     private String getUrlCheckingError() {
         String result = Switch(checkUrlType).get(
-                Value(CheckTypes.NONE, ""),
+                Value(NONE, ""),
                 Value(EQUALS, t -> !url().check() ? "Url '%s' doesn't equal to '%s'" : ""),
                 Value(MATCH, t -> !url().match() ? "Url '%s' doesn't match to '%s'" : ""),
                 Value(CONTAINS, t -> !url().contains() ? "Url '%s' doesn't contains '%s'" : "")
@@ -200,7 +205,7 @@ public class WebPage extends DriverBase implements PageObject {
         if (!hasRunDrivers())
             return false;
         boolean result = Switch(checkUrlType).get(
-                Value(CheckTypes.NONE, t -> true),
+                Value(NONE, t -> true),
                 Value(EQUALS, t -> url().check()),
                 Value(MATCH, t -> url().match()),
                 Value(CONTAINS, t -> url().contains()),
@@ -208,7 +213,7 @@ public class WebPage extends DriverBase implements PageObject {
         );
         if (!result) return false;
         result = Switch(checkTitleType).get(
-                Value(CheckTypes.NONE, t -> true),
+                Value(NONE, t -> true),
                 Value(EQUALS, t -> title().check()),
                 Value(MATCH, t -> title().match()),
                 Value(CONTAINS, t -> title().contains()),

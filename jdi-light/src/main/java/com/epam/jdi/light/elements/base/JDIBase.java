@@ -10,6 +10,7 @@ import com.epam.jdi.light.elements.interfaces.base.HasCache;
 import com.epam.jdi.light.elements.interfaces.base.IBaseElement;
 import com.epam.jdi.light.elements.interfaces.base.JDIElement;
 import com.epam.jdi.tools.CacheValue;
+import com.epam.jdi.tools.Safe;
 import com.epam.jdi.tools.Timer;
 import com.epam.jdi.tools.func.JAction1;
 import com.epam.jdi.tools.func.JFunc;
@@ -52,6 +53,7 @@ import static com.epam.jdi.light.settings.WebSettings.STRICT_SEARCH;
 import static com.epam.jdi.light.settings.WebSettings.TEXT_TYPE;
 import static com.epam.jdi.light.settings.WebSettings.VISIBLE_ELEMENT;
 import static com.epam.jdi.light.settings.WebSettings.logger;
+import static com.epam.jdi.tools.EnumUtils.getEnumValue;
 import static com.epam.jdi.tools.LinqUtils.filter;
 import static com.epam.jdi.tools.LinqUtils.map;
 import static com.epam.jdi.tools.ReflectionUtils.isClass;
@@ -68,7 +70,6 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  * Created by Roman Iovlev on 14.02.2018
  * Email: roman.iovlev.jdi@gmail.com; Skype: roman.iovlev
  */
-
 public abstract class JDIBase extends DriverBase implements IBaseElement, HasCache {
     public static JFunc1<String, String> STRING_SIMPLIFY =
         s -> s.toLowerCase().replaceAll("[^a-zA-Z0-9]", "");
@@ -101,7 +102,7 @@ public abstract class JDIBase extends DriverBase implements IBaseElement, HasCac
     public JDILocator locator = new JDILocator();
     @Override
     public DriverBase setParent(Object parent) {
-        this.locator.isRoot = false;
+        //this.locator.isRoot = false;
         return super.setParent(parent);
     }
     public CacheValue<WebElement> webElement = new CacheValue<>();
@@ -240,9 +241,17 @@ public abstract class JDIBase extends DriverBase implements IBaseElement, HasCac
             return beforeSearch(getSmart());
         }
         if (locator.argsCount() != args.length) {
+        if (locator.argsCount() != args.length) {
+            if (locator.argsCount() == 0 && args.length == 1) {
+                if (args[0].getClass() == String.class)
+                    return new WebList(this).get(args[0].toString());
+                if (isClass(args[0].getClass(), Enum.class))
+                    return new WebList(this).get(getEnumValue((Enum)args[0]));
+            }
             throw exception("Can't get element with template locator '%s'. Expected %s arguments but found %s", getLocator(), locator.argsCount(), args.length);
         }
 
+        }
         List<WebElement> els = getAllElements(args);
         if (els.size() == 0) {
             throw exception(FAILED_TO_FIND_ELEMENT_MESSAGE, toString(), getTimeout());
@@ -401,12 +410,12 @@ public abstract class JDIBase extends DriverBase implements IBaseElement, HasCac
     }
     private boolean isRoot(Object parent) {
         return parent == null || isClass(parent.getClass(), WebPage.class)
-                || !isInterface(parent.getClass(), JDIElement.class);
+            || !isInterface(parent.getClass(), JDIElement.class);
     }
     private SearchContext getContext(Object parent, JDILocator locator) {
         return locator.isRoot || isRoot(parent)
-                ? getDefaultContext()
-                : getSearchContext(parent);
+            ? getDefaultContext()
+            : getSearchContext(parent);
     }
     private SearchContext getFrameContext(By frame) {
         return driver().switchTo().frame(uiSearch(driver(),frame).get(0));
@@ -469,18 +478,20 @@ public abstract class JDIBase extends DriverBase implements IBaseElement, HasCac
         );
     };
 
-    public void actions(JFunc2<Actions, WebElement, Actions> actions) {
-        actions.execute(actionsClass(), get()).build().perform();
+    public void actions(JFunc2<Actions, WebElement, Actions> action) {
+        action.execute(actions.get(), get()).build().perform();
     }
-    public void actionsWitElement(JFunc2<Actions, WebElement, Actions> actions) {
-        actions.execute(actionsClass().moveToElement(get()), get()).build().perform();
+    public void actions(JFunc1<Actions, Actions> action) {
+        action.execute(actions.get()).build().perform();
     }
-    private Actions actions = null;
-    private Actions actionsClass() {
-        if (actions == null)
-            actions = new Actions(driver());
-        return actions;
+    public void actionsWithElement(JFunc2<Actions, WebElement, Actions> action) {
+        action.execute(actions.get().moveToElement(get()), get()).build().perform();
     }
+    public void actionsWithElement(JFunc1<Actions, Actions> action) {
+        action.execute(actions.get().moveToElement(get())).build().perform();
+    }
+    private Safe<Actions> actions = new Safe<>(() -> new Actions(driver()));
+
     private ElementArea clickAreaType;
     public ElementArea getClickType() {
         return clickAreaType != null ? clickAreaType : CLICK_TYPE;

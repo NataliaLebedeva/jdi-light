@@ -1,10 +1,5 @@
 package com.epam.jdi.light.elements.common;
 
-/**
- * Created by Roman Iovlev on 14.02.2018
- * Email: roman.iovlev.jdi@gmail.com; Skype: roman.iovlev
- */
-
 import com.epam.jdi.light.asserts.core.IsAssert;
 import com.epam.jdi.light.asserts.generic.HasAssert;
 import com.epam.jdi.light.common.ElementArea;
@@ -63,6 +58,10 @@ import static java.lang.String.valueOf;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
+/**
+ * Created by Roman Iovlev on 14.02.2018
+ * Email: roman.iovlev.jdi@gmail.com; Skype: roman.iovlev
+ */
 public class UIElement extends JDIBase
         implements WebElement, SetValue, HasAssert<IsAssert>, IListBase,
         HasClick, IsText, HasLabel, HasPlaceholder, IsInput, HasCheck {
@@ -153,7 +152,7 @@ public class UIElement extends JDIBase
      * Check that element is selected
      * @return boolean
      */
-    @JDIAction("Check that '{name}' is selected")
+    @JDIAction(value = "Check that '{name}' is selected", timeout = 0)
     public boolean isSelected() {
         return selected();
     }
@@ -162,7 +161,7 @@ public class UIElement extends JDIBase
      * Check the element is enabled
      * @return boolean
      */
-    @JDIAction("Check that '{name}' is enabled")
+    @JDIAction(value = "Check that '{name}' is enabled", timeout = 0)
     public boolean isEnabled() {
         return enabled();
     }
@@ -176,7 +175,7 @@ public class UIElement extends JDIBase
      * Check the element is displayed
      * @return boolean
      */
-    @JDIAction("Check that '{name}' is displayed")
+    @JDIAction(value = "Check that '{name}' is displayed", timeout = 0)
     public boolean isDisplayed() {
         return displayed();
     }
@@ -263,7 +262,7 @@ public class UIElement extends JDIBase
     }
 
     public void click(int x, int y) {
-        actionsWitElement((a, e) -> a.moveByOffset(x-getRect().width/2, y-getRect().height/2).click());
+        actionsWithElement(a -> a.moveByOffset(x-getRect().width/2, y-getRect().height/2).click());
     }
     public void click(ElementArea area) {
         if (isDisabled())
@@ -346,7 +345,7 @@ public class UIElement extends JDIBase
 
     public Select asSelect() {
         WebElement select = getWebElement();
-        if (!select.getTagName().equals("select")) {
+        if (!getTagName().equals("select")) {
             List<WebElement> els = select.findElements(By.tagName("select"));
             if (els.size() > 0)
                 select = els.get(0);
@@ -382,7 +381,7 @@ public class UIElement extends JDIBase
      * Check that element is deselected
      * @return boolean
      */
-    @JDIAction("Check that '{name}' is deselected")
+    @JDIAction(value = "Check that '{name}' is deselected", timeout = 0)
     public boolean isDeselected() {
         return !selected();
     }
@@ -391,11 +390,23 @@ public class UIElement extends JDIBase
      * Check the element is hidden
      * @return boolean
      */
-    @JDIAction("Check that '{name}' is hidden")
+    @JDIAction(value = "Check that '{name}' is hidden", timeout = 0)
     public boolean isHidden() {
         return !displayed();
     }
 
+    @JDIAction(value = "Check that '{name}' is hidden", timeout = 0)
+    public boolean isExist() {
+        return noWait(() -> {
+            try {
+                get(); return true;
+            } catch (Exception ignore) { return false; }
+        });
+    }
+    @JDIAction(value = "Check that '{name}' is hidden", timeout = 0)
+    public boolean isNotExist() {
+        return !isExist();
+    }
     /**
      * Check the element is disabled
      * @return boolean
@@ -413,7 +424,7 @@ public class UIElement extends JDIBase
     public List<String> classes() {
         String cl = attr("class");
         return cl.length() > 0
-            ? asList(attr("class").split(" "))
+            ? asList(cl.split(" "))
             : new ArrayList<>();
     }
 
@@ -482,14 +493,14 @@ public class UIElement extends JDIBase
      */
     @JDIAction("DoubleClick on '{name}'") @Override
     public void doubleClick() {
-        actionsWitElement(Actions::doubleClick);
+        actionsWithElement((a,e) -> a.doubleClick(e));
     }
     /**
      * Right click on the element
      */
     @JDIAction("RightClick on '{name}'") @Override
     public void rightClick() {
-        actionsWitElement(Actions::contextClick);
+        actionsWithElement((a,e) -> a.contextClick(e));
     }
 
     /**
@@ -535,7 +546,6 @@ public class UIElement extends JDIBase
         if (isDeselected())
             click();
     }
-
 
     /** Click on element selected */
     @JDIAction("Uncheck '{name}'")
@@ -633,9 +643,8 @@ public class UIElement extends JDIBase
     protected boolean selected() {
         if (getWebElement().isSelected())
             return true;
-        List<String> cl = classes();
-        return cl.contains("checked") || cl.contains("active")||
-            cl.contains("selected") || getAttribute("checked").equals("true");
+        return hasClass("checked") || hasClass("active")||
+            hasClass("selected") || attr("checked").equals("true");
     }
     protected boolean enabled() {
         if (hasClass("active")) {

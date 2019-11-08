@@ -11,6 +11,7 @@ import com.epam.jdi.light.elements.pageobjects.annotations.locators.UI;
 import com.epam.jdi.light.elements.pageobjects.annotations.locators.WithText;
 import com.epam.jdi.light.elements.pageobjects.annotations.locators.XPath;
 import com.epam.jdi.tools.pairs.Pair;
+import com.epam.jdi.light.settings.WebSettings;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.Quotes;
 
@@ -25,9 +26,14 @@ import static com.epam.jdi.light.driver.WebDriverByUtils.byText;
 import static com.epam.jdi.light.driver.WebDriverByUtils.defineLocator;
 import static com.epam.jdi.light.driver.WebDriverByUtils.withText;
 import static com.epam.jdi.light.settings.WebSettings.DOMAIN;
+import static com.epam.jdi.light.settings.WebSettings.getDomain;
 import static com.epam.jdi.tools.StringUtils.splitCamelCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
+/**
+ * Created by Roman Iovlev on 14.02.2018
+ * Email: roman.iovlev.jdi@gmail.com; Skype: roman.iovlev
+ */
 public class WebAnnotationsUtil {
 
     public static boolean hasAnnotation(Field field, Class<? extends Annotation> annotation) {
@@ -52,12 +58,12 @@ public class WebAnnotationsUtil {
         if (parentClass != null && parentClass.isAnnotationPresent(JSite.class)) {
             String siteDomain = parentClass.getAnnotation(JSite.class).value();
             if (!isBlank(siteDomain))
-                DOMAIN = siteDomain;
+                WebSettings.setDomain(siteDomain);
         }
     }
     public static String getUrlFromUri(String uri) {
-        if (isBlank(uri)) return DOMAIN;
-        return DOMAIN.replaceAll("/*$", "") + "/" + uri.replaceAll("^/*", "");
+        if (isBlank(uri)) return getDomain();
+        return getDomain().replaceAll("/*$", "") + "/" + uri.replaceAll("^/*", "");
     }
 
     public static By getFrame(Frame frame) {

@@ -49,14 +49,17 @@ import static com.epam.jdi.light.driver.get.DriverData.PAGE_LOAD_STRATEGY;
 import static com.epam.jdi.light.driver.get.DriverData.PRELATEST_VERSION;
 import static com.epam.jdi.light.driver.get.RemoteDriver.DRIVER_REMOTE_URL;
 import static com.epam.jdi.light.elements.composite.WebPage.CHECK_AFTER_OPEN;
+import static com.epam.jdi.light.elements.init.PageFactory.initialized;
 import static com.epam.jdi.light.elements.init.UIFactory.$;
 import static com.epam.jdi.light.logger.JDILogger.instance;
 import static com.epam.jdi.light.logger.LogLevels.parseLogLevel;
 import static com.epam.jdi.light.settings.TimeoutSettings.PAGE_TIMEOUT;
 import static com.epam.jdi.light.settings.TimeoutSettings.TIMEOUT;
 import static com.epam.jdi.tools.LinqUtils.filter;
-import static com.epam.jdi.tools.PropertyReader.fillAction;
-import static com.epam.jdi.tools.PropertyReader.getProperty;
+import static com.epam.jdi.tools.PathUtils.mergePath;
+import static com.epam.jdi.tools.PropertyReader.*;
+import static com.epam.jdi.tools.StringUtils.LINE_BREAK;
+import static com.epam.jdi.tools.StringUtils.format;
 import static java.lang.Integer.parseInt;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
@@ -67,6 +70,22 @@ import static org.openqa.selenium.PageLoadStrategy.NORMAL;
 public class WebSettings {
     public static ILogger logger = instance("JDI");
     public static String DOMAIN;
+    public static String getDomain() {
+        if (DOMAIN != null)
+            return DOMAIN;
+        if (!initialized)
+            init();
+        if (loadProperties().size() == 0)
+            throw new RuntimeException(format("Can't find test.properties at: %s%sIn order to get DOMAIN please specify it in test.properties or directly using WebSettings.setDomain('http://...')",
+                getCorrectPath(), LINE_BREAK));
+        if (DOMAIN == null)
+            throw new RuntimeException(format("Can't find 'domain=' in test.properties at: %s%sIn order to get DOMAIN please specify it in test.properties or directly using WebSettings.setDomain('http://...')",
+                getCorrectPath(), LINE_BREAK));
+        return DOMAIN;
+    }
+    public static void setDomain(String domain) {
+        DOMAIN = domain;
+    }
     public static String KILL_BROWSER = "afterAndBefore";
     public static JFunc1<WebElement, Boolean> ANY_ELEMENT = Objects::nonNull;
     public static JFunc1<WebElement, Boolean> VISIBLE_ELEMENT = WebElement::isDisplayed;
@@ -98,6 +117,8 @@ public class WebSettings {
     public static TextTypes TEXT_TYPE = SMART_TEXT;
     public static boolean STRICT_SEARCH = true;
     public static boolean hasDomain() {
+        if (!initialized)
+            init();
         return DOMAIN != null && DOMAIN.contains("://");
     }
     public static String TEST_GROUP = "";
@@ -136,7 +157,7 @@ public class WebSettings {
         getProperties(TEST_PROPERTIES_PATH);
         fillAction(p -> TIMEOUT = new Timeout(parseInt(p)), "timeout.wait.element");
         fillAction(p -> PAGE_TIMEOUT = new Timeout(parseInt(p)), "timeout.wait.page");
-        fillAction(p -> DOMAIN = p, "domain");
+        fillAction(p -> setDomain(p), "domain");
         if (DRIVER_NAME.equals(DEFAULT_DRIVER))
             fillAction(p -> DRIVER_NAME = p, "driver");
         fillAction(p -> DRIVER_VERSION = p.equalsIgnoreCase(LATEST_VERSION)
@@ -234,7 +255,13 @@ public class WebSettings {
     }
     public static Properties getProperties(String path) {
         // TODO use mergePath macos and windows
-        Properties p = PropertyReader.getProperties("/../../target/classes/" + path);
-        return p.size() > 0 ? p : PropertyReader.getProperties(path);
+        Properties pTest = PropertyReader.getProperties(mergePath(path));
+        Properties pTarget = PropertyReader.getProperties(mergePath("/../../target/classes/" + path));
+        if (pTarget.size() > 0)
+            return pTarget;
+        String propertiesPath = pTest.size() > 0
+                ? path
+                : "/../../target/classes/" + path;
+        return PropertyReader.getProperties(mergePath(propertiesPath));
     }
 }
