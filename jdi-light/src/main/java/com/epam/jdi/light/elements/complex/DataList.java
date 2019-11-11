@@ -10,6 +10,7 @@ import com.epam.jdi.light.common.JDIAction;
 import com.epam.jdi.light.elements.interfaces.base.IListBase;
 import com.epam.jdi.tools.LinqUtils;
 import com.epam.jdi.tools.PrintUtils;
+import com.epam.jdi.tools.map.MultiMap;
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
 
@@ -95,4 +96,8 @@ public class DataList<T extends IListBase, D> extends ListBase<T, DataListAssert
         }
     }
 
+    @Override
+    public MultiMap<String, T> elements(int minAmount) {
+        return null;
+    }
 }

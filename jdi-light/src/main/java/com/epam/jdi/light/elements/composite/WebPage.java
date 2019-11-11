@@ -17,6 +17,7 @@ import java.util.function.Supplier;
 import static com.epam.jdi.light.common.CheckTypes.CONTAINS;
 import static com.epam.jdi.light.common.CheckTypes.EQUALS;
 import static com.epam.jdi.light.common.CheckTypes.MATCH;
+import static com.epam.jdi.light.common.CheckTypes.NONE;
 import static com.epam.jdi.light.common.Exceptions.exception;
 import static com.epam.jdi.light.common.PageChecks.EVERY_PAGE;
 import static com.epam.jdi.light.common.PageChecks.NEW_PAGE;
@@ -26,6 +27,7 @@ import static com.epam.jdi.light.driver.WebDriverFactory.jsExecute;
 import static com.epam.jdi.light.elements.base.OutputTemplates.PRINT_PAGE_DEBUG;
 import static com.epam.jdi.light.elements.base.OutputTemplates.PRINT_PAGE_INFO;
 import static com.epam.jdi.light.elements.base.OutputTemplates.PRINT_PAGE_STEP;
+import static com.epam.jdi.light.elements.init.InitActions.init;
 import static com.epam.jdi.light.elements.init.PageFactory.initElements;
 import static com.epam.jdi.light.elements.pageobjects.annotations.WebAnnotationsUtil.getUrlFromUri;
 import static com.epam.jdi.light.logger.LogLevels.DEBUG;
@@ -33,7 +35,7 @@ import static com.epam.jdi.light.logger.LogLevels.INFO;
 import static com.epam.jdi.light.logger.LogLevels.STEP;
 import static com.epam.jdi.light.settings.TimeoutSettings.PAGE_TIMEOUT;
 import static com.epam.jdi.light.settings.TimeoutSettings.TIMEOUT;
-import static com.epam.jdi.light.settings.WebSettings.DOMAIN;
+import static com.epam.jdi.light.settings.WebSettings.getDomain;
 import static com.epam.jdi.light.settings.WebSettings.logger;
 import static com.epam.jdi.tools.StringUtils.msgFormat;
 import static com.epam.jdi.tools.switcher.SwitchActions.Case;
@@ -117,7 +119,6 @@ public class WebPage extends DriverBase implements PageObject {
     public void updatePageData(Url urlAnnotation, Title titleAnnotation) {
         if (urlAnnotation != null)
             setUrl(urlAnnotation.value(), urlAnnotation.template(), urlAnnotation.validate());
-        else setUrl(getDomain());
         if (titleAnnotation != null) {
             title = titleAnnotation.value();
             checkTitleType = titleAnnotation.validate();
@@ -188,7 +189,7 @@ public class WebPage extends DriverBase implements PageObject {
 
     private String getTitleCheckingError() {
         String result = Switch(checkTitleType).get(
-                Value(CheckTypes.NONE, ""),
+                Value(NONE, ""),
                 Value(EQUALS, t -> !title().check() ? "Title '%s' doesn't equal to '%s'" : ""),
                 Value(MATCH, t -> !title().match() ? "Title '%s' doesn't match to '%s'" : ""),
                 Value(CONTAINS, t -> !title().contains() ? "Title '%s' doesn't contains '%s'" : "")

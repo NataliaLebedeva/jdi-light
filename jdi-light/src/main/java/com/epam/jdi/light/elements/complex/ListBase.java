@@ -65,12 +65,6 @@ abstract class ListBase<T extends IListBase, A extends UISelectAssert>
      * @return List
      */
 
-    @JDIAction(level = DEBUG)
-    public MapArray<String, T> elements(int minAmount) {
-        if (actualMapValue())
-            return map.get();
-        return list().elements(minAmount).toMapArray(this::toT);
-    }
 
     /**
      * @param value

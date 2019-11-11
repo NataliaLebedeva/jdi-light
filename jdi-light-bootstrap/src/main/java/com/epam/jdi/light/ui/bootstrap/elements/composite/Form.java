@@ -73,6 +73,11 @@ public class Form<T> extends com.epam.jdi.light.elements.composite.Form<T> {
         return feedbackMap;
     }
 
+    private Object pageObject = this;
+    protected Object getPageObject() {
+        return this.pageObject;
+    }
+
     private WebList getFeedbackList(UIElement element, String locator) {
         UIElement validatedElement = getSubmittedElement(element);
         WebList list = validatedElement.finds(locator);
@@ -166,4 +171,8 @@ public class Form<T> extends com.epam.jdi.light.elements.composite.Form<T> {
         return elementList;
     }
 
+    public boolean isValid() {
+        Object res = core().js().executeScript("return arguments[0].checkValidity()", core().get());
+        return (Boolean) res;
+    }
 }

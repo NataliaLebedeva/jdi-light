@@ -21,6 +21,7 @@ import io.github.com.pages.HomePage;
 import io.github.com.pages.HomePageFrame;
 import io.github.com.pages.HtmlElementsPage;
 import io.github.com.pages.MetalAndColorsPage;
+import io.github.com.pages.SimpleTablePage;
 import io.github.com.pages.UsersPage;
 import org.openqa.selenium.WebElement;
 
@@ -43,6 +44,8 @@ public class StaticSite {
 	public static DatesPage datesPage;
 	@Url("/user-table.html") @Title("User Table")
 	public static UsersPage usersPage;
+	@Url("/simple-table.html") @Title("Simple Table")
+	public static SimpleTablePage tablePage;
 
 	@Css("[ui=label]") public static List<WebElement> navigation;
 	@Css("[ui=label]") public static WebList navigationL;

@@ -6,7 +6,7 @@ import org.testng.annotations.BeforeMethod;
 import static io.github.com.StaticSite.tablePage;
 import static io.github.epam.html.tests.site.steps.States.shouldBeLoggedIn;
 
-public class FurnitureTests implements TestsInit {
+public class FurnitureTests extends TestsInit {
     @BeforeMethod
     public void before() {
         shouldBeLoggedIn();

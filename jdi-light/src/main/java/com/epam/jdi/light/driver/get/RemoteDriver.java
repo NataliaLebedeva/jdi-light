@@ -1,5 +1,7 @@
 package com.epam.jdi.light.driver.get;
 
+import java.net.URL;
+
 import static com.epam.jdi.light.common.Exceptions.exception;
 import static com.epam.jdi.light.common.Exceptions.safeException;
 import static org.apache.commons.lang3.StringUtils.isBlank;

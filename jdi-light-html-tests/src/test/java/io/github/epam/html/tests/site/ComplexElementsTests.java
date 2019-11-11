@@ -11,6 +11,7 @@ import static io.github.com.StaticSite.homePage;
 import static io.github.com.StaticSite.leftMenu;
 import static io.github.com.StaticSite.metalAndColorsPage;
 import static io.github.com.StaticSite.navigation;
+import static io.github.com.StaticSite.navigationElement;
 import static io.github.com.StaticSite.navigationL;
 import static io.github.com.StaticSite.navigationS;
 import static io.github.com.enums.ColorsList.Green;

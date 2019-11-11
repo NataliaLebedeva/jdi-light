@@ -6,7 +6,6 @@ import com.epam.jdi.light.common.JDIAction;
 import com.epam.jdi.light.common.JDILocator;
 import com.epam.jdi.light.common.TextTypes;
 import com.epam.jdi.light.elements.base.JDIBase;
-import com.epam.jdi.light.elements.SeleniumWebList;
 import com.epam.jdi.light.elements.common.UIElement;
 import com.epam.jdi.light.elements.interfaces.base.HasUIList;
 import com.epam.jdi.light.elements.interfaces.base.IListBase;
@@ -40,28 +39,16 @@ import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-public class WebList extends SeleniumWebList implements ISelector, HasUIList, HasAssert<UISelectAssert<UISelectAssert, WebList>> {
-    public WebList() { super(); jdiIndex = 1; }
-    public WebList(By locator) { super((locator)); jdiIndex = 1; }
-    public WebList(List<WebElement> elements) {
-        super(elements);
-    }
-    public WebList(JDIBase base) {
-        super(base);
-        jdiIndex = 1;
-    }
-    public WebList(JDIBase base, String locator, String name, Object parent) {
-        super(base, locator, name, parent);
-        jdiIndex = 1;
-    }
+/**
+ * Created by Roman Iovlev on 14.02.2018
+ * Email: roman.iovlev.jdi@gmail.com; Skype: roman.iovlev
+ */
+public class WebList extends JDIBase implements IList<UIElement>, SetValue, ISelector, HasUIList, HasAssert<UISelectAssert<UISelectAssert, WebList>> {
     @Override
     public WebList list() { return this; }
-    @Override
-    public WebList setName(String name) {
-        super.setName(name);
-        return this;
+    public UIElement core() {
+        return new UIElement(base());
     }
-    @Override
     public WebList setup(JAction1<JDIBase> setup) {
         return setup(WebList.class, setup);
     }
@@ -99,7 +86,7 @@ public class WebList extends SeleniumWebList implements ISelector, HasUIList, Ha
     }
 
     protected CacheValue<MultiMap<String, UIElement>> elements =
-        new CacheValue<>(MultiMap::new);
+            new CacheValue<>(MultiMap::new);
 
     protected String nameFromIndex(int i) {
         return nameFromValue(i+1+"");
@@ -114,7 +101,7 @@ public class WebList extends SeleniumWebList implements ISelector, HasUIList, Ha
             return elements.get();
         if (locator.isTemplate())
             throw exception("You call method that can't be used with template locator. " +
-                "Please correct %s locator to get List<WebElement> in order to use this method", shortBy(getLocator()));
+                    "Please correct %s locator to get List<WebElement> in order to use this method", shortBy(getLocator()));
         MultiMap<String, UIElement> result = getListElements(minAmount);
         if (elements.isUseCache())
             elements.set(result);
@@ -142,8 +129,8 @@ public class WebList extends SeleniumWebList implements ISelector, HasUIList, Ha
     protected String getElementName(UIElement element) {
         try {
             return (UIELEMENT_NAME != null
-                ? UIELEMENT_NAME
-                : getTextType().func).execute(element);
+                    ? UIELEMENT_NAME
+                    : getTextType().func).execute(element);
         } catch (Exception ex) {
             return "";
         }
@@ -163,8 +150,8 @@ public class WebList extends SeleniumWebList implements ISelector, HasUIList, Ha
     @JDIAction(level = DEBUG) @Override
     public UIElement get(String value) {
         return !locator.isTemplate() && hasKey(value)
-            ? elements(1).get(value)
-            : getUIElement(value);
+                ? elements(1).get(value)
+                : getUIElement(value);
     }
 
     public UIElement getUIElement(String value) {
@@ -173,7 +160,7 @@ public class WebList extends SeleniumWebList implements ISelector, HasUIList, Ha
         else {
             refresh();
             MultiMap<String, UIElement> result = timer().getResultByCondition(
-                () -> elements(1), els -> hasKey(value));
+                    () -> elements(1), els -> hasKey(value));
             if (result != null)
                 return elements(1).get(value);
             throw exception("Can't get '%s'. No elements with this name found", value);
@@ -186,7 +173,6 @@ public class WebList extends SeleniumWebList implements ISelector, HasUIList, Ha
         UIELEMENT_NAME = func;
         return this;
     }
-    @Override
     public WebList setUIElementName(TextTypes type) {
         if (type.equals(INDEX)) {
             nameIndex = true;
@@ -204,9 +190,9 @@ public class WebList extends SeleniumWebList implements ISelector, HasUIList, Ha
         if (index < 0)
             throw exception("Can't get element with index '%s'. Index should be 0 or more", index);
         return (locator.isTemplate()
-            ? tryGetByIndex(index)
-            : initElement(() -> getList(index+1).get(index)))
-        .setName(nameFromIndex(index));
+                ? tryGetByIndex(index)
+                : initElement(() -> getList(index+1).get(index)))
+                .setName(nameFromIndex(index));
     }
     protected UIElement tryGetByIndex(int index) {
         try {
@@ -474,7 +460,7 @@ public class WebList extends SeleniumWebList implements ISelector, HasUIList, Ha
     public boolean isDisabled() {
         return !isEnabled();
     }
-////
+    ////
     @JDIAction(level = DEBUG)
     public void highlight(String color) {
         foreach(el -> el.highlight(color));

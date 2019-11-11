@@ -9,13 +9,13 @@ import com.epam.jdi.light.asserts.generic.UISelectAssert;
 import com.epam.jdi.light.common.JDIAction;
 import com.epam.jdi.light.elements.interfaces.base.IListBase;
 import com.epam.jdi.tools.func.JFunc1;
+import com.epam.jdi.tools.map.MultiMap;
 import org.hamcrest.Matcher;
 import org.hamcrest.MatcherAssert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
-
 
 
 public class JList<T extends IListBase> extends ListBase<T, UISelectAssert<UISelectAssert, JList<T>>> {
@@ -41,5 +41,10 @@ public class JList<T extends IListBase> extends ListBase<T, UISelectAssert<UISel
 
     public boolean wait(JFunc1<JList<T>, Boolean> condition) {
         return base().timer().wait(() -> condition.execute(this));
+    }
+
+    @Override
+    public MultiMap<String, T> elements(int minAmount) {
+        return null;
     }
 }

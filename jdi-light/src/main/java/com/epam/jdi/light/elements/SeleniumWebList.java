@@ -13,6 +13,7 @@ import com.epam.jdi.tools.func.JAction1;
 import com.epam.jdi.tools.func.JFunc;
 import com.epam.jdi.tools.func.JFunc1;
 import com.epam.jdi.tools.map.MapArray;
+import com.epam.jdi.tools.map.MultiMap;
 import org.apache.commons.lang3.ArrayUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -39,8 +40,8 @@ public class SeleniumWebList extends JDIBase implements IList<UIElement>, SetVal
     protected int jdiIndex = 0;
     protected JFunc1<UIElement, String> UIELEMENT_NAME;
     protected boolean nameIndex = false;
-    protected CacheValue<MapArray<String, UIElement>> elements =
-            new CacheValue<>(MapArray::new);
+    protected CacheValue<MultiMap<String, UIElement>> elements =
+            new CacheValue<>(MultiMap::new);
 
     public UIElement core() {
         return new UIElement(base());
@@ -87,7 +88,7 @@ public class SeleniumWebList extends JDIBase implements IList<UIElement>, SetVal
     }
 
     @JDIAction(level = DEBUG)
-    public MapArray<String, UIElement> elements(int minAmount) {
+    public MultiMap<String, UIElement> elements(int minAmount) {
         if (elements.isUseCache() && elements.hasValue() && isActual() && elements.get().size() >= minAmount) {
             return elements.get();
         }
@@ -95,20 +96,20 @@ public class SeleniumWebList extends JDIBase implements IList<UIElement>, SetVal
             throw exception("You call method that can't be used with template locator. " +
                     "Please correct %s locator to get List<WebElement> in order to use this method", shortBy(getLocator()));
         }
-        MapArray<String, UIElement> result = getListElements(minAmount);
+        MultiMap<String, UIElement> result = getListElements(minAmount);
         if (elements.isUseCache()) {
             elements.set(result);
         }
         return result;
     }
-    protected MapArray<String, UIElement> getListElements(int minAmount) {
-        MapArray<String, UIElement> result = new MapArray<>();
+    protected MultiMap<String, UIElement> getListElements(int minAmount) {
+        MultiMap<String, UIElement> result = new MultiMap<>();
         List<WebElement> webElements = getList(minAmount);
         int length = webElements.size();
         for (int i=0; i < length; i++) {
             int j = i;
             UIElement element = initElement(webElements.get(j), () -> getList(minAmount).get(j), j);
-            result.update(getElementName(i, element), element);
+            //result.update(getElementName(i, element), element);
         }
         return result;
     }
@@ -132,11 +133,11 @@ public class SeleniumWebList extends JDIBase implements IList<UIElement>, SetVal
     }
     protected boolean hasKey(String value) {
         if (elements.get() == null){
-            elements.set(new MapArray<>());
+            elements.set(new MultiMap<>());
         }
         return hasKey(elements.get(), value);
     }
-    protected boolean hasKey(MapArray<String, UIElement> map, String value) {
+    protected boolean hasKey(MultiMap<String, UIElement> map, String value) {
         List<String> keys = map.keys();
         if (keys.isEmpty()) {
             return false;
@@ -163,7 +164,7 @@ public class SeleniumWebList extends JDIBase implements IList<UIElement>, SetVal
         }
         else {
             refresh();
-            MapArray<String, UIElement> result = timer().getResultByCondition(
+            MultiMap<String, UIElement> result = timer().getResultByCondition(
                     () -> elements(1),
                     els -> hasKey(els, value));
             if (result != null && result.has(value)) {
