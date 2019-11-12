@@ -1,5 +1,6 @@
 package org.mytests.tests.example;
 
+
 import org.mytests.tests.SimpleTestsInit;
 
 public class RetryTests extends SimpleTestsInit {
