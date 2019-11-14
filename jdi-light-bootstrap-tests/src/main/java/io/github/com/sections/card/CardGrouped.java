@@ -5,7 +5,7 @@ import com.epam.jdi.light.ui.bootstrap.elements.common.Image;
 import com.epam.jdi.light.ui.bootstrap.elements.common.Text;
 import com.epam.jdi.light.ui.bootstrap.elements.complex.Card;
 
-public class CardWithinCardGroup extends Card {
+public class CardGrouped extends Card {
 
     @UI(".card-title") public Text title;
     @UI(".card-text:nth-of-type(1)") public Text mainText;
