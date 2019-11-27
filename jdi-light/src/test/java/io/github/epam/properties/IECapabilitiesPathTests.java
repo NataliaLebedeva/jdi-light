@@ -17,21 +17,17 @@ public class IECapabilitiesPathTests {
     @DataProvider
     public static Object[] negativeData() {
         return new Object[]{"../../../ff.properties",
-                "../../../ie.txt",
-                "C:ie.properties",
-                "/ie.properties",
-                "ff.properties"};
+                            "../../../ie.txt",
+                            "C:ie.properties"};
     }
 
     @DataProvider
     public static Object[] positiveData() {
         return new Object[]{"../../../ie.properties",
+                "C:/ie.properties",
                 "../ie.properties",
-                "../directory/ie.properties",
-                "folder/ie.properties",
-                "ie.properties",
-                "folder\\ie.properties"
-    };
+                "C:/directory/ie.properties"};
+    }
 
     @Test(dataProvider = "negativeData")
     public void negativeTest(String value) {
