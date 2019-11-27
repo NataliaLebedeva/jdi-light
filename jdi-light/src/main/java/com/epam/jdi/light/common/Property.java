@@ -10,7 +10,8 @@ public enum Property {
     PAGE_LOAD_STRATEGY("page.load.strategy", "normal|eager|none",
             "Value of 'page.load.strategy' must be 'normal', 'eager' or 'none'."),
     PAGE_CHECK_AFTER_OPEN("page.check.after.open", "NONE|NEW_PAGE|EVERY_PAGE",
-            "Value of 'page.check.after.open' must be 'NONE', 'NEW_PAGE', 'EVERY_PAGE'."),
+            "Value of 'page.check.after.open' must be 'NONE', 'NEW_PAGE', 'EVERY_PAGE'.");
+            "Value of 'timeout.wait.element' must be an integer from 0 to 999."),
     SMART_LOCATORS("smart.locators", "((#%s|\\[[a-z]+=%s\\])[;, ]{0,1})+",
         "Value of 'smart.locators' must be a list of regular expressions."),
     CHROME_CAPABILITIES_PATH("chrome.capabilities.path", "^([\\w-.]+[\\\\\\/])*(chrome\\.properties)$",

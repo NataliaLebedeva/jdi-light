@@ -28,8 +28,9 @@ public class FFCapabilitiesPathTests {
         return new Object[]{"../../../ff.properties",
                 "../ff.properties",
                 "ff.properties",
-                "folder/ff.properties"};
-    }
+                "folder/ff.properties",
+                "../directory/ff.properties",
+    };
 
     @Test(dataProvider = "negativeData")
     public void negativeTest(String value) {
