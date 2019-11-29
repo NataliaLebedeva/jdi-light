@@ -1,4 +1,4 @@
-package selenium.seleniumPO;
+package selenium.selenium.po;
 
 import selenium.entities.User;
 

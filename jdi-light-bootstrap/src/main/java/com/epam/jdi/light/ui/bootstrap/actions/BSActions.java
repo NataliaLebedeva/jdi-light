@@ -31,7 +31,7 @@ public class BSActions {
     @Pointcut("execution(* *(..)) && @annotation(com.epam.jdi.light.common.JDIAction)")
     protected void jdiPointcut() {
         // hollow-method
-        //required d not remove
+        //required do not remove
     }
 
     @Around("jdiPointcut()")
