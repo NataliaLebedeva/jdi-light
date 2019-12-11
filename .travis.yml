@@ -3,9 +3,12 @@ jdk:
 - openjdk8
 before_install:
 - sudo apt-get -y install jq
+- sudo apt-get install -qq cucumber
 before_script:
 - ls -lah
 - google-chrome-stable --version
+script:
+  - cucumber --version
 addons:
   chrome: stable
 
