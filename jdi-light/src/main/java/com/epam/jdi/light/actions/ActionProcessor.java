@@ -74,6 +74,9 @@ public class ActionProcessor {
                 getDriver().manage().timeouts().implicitlyWait(TIMEOUT.get(), TimeUnit.SECONDS);
             return AFTER_JDI_ACTION.execute(jp, result);
         } catch (Throwable ex) {
+            if(ex.getCause() instanceof AssertionError){
+                throw new AssertionError();
+            }
             throw exception(ex, ACTION_FAILED.execute(getObjAround(jp), (aroundCount() > 1) ? null : jp, getExceptionAround(ex, aroundCount() == 1)));
         }
     }
