@@ -5,7 +5,6 @@ import com.epam.jdi.light.asserts.generic.HasAssert;
 import com.epam.jdi.light.common.ElementArea;
 import com.epam.jdi.light.common.JDIAction;
 import com.epam.jdi.light.common.TextTypes;
-import com.epam.jdi.light.common.UIUtils;
 import com.epam.jdi.light.elements.base.JDIBase;
 import com.epam.jdi.light.elements.complex.WebList;
 import com.epam.jdi.light.elements.interfaces.base.*;
@@ -723,7 +722,7 @@ public class UIElement extends JDIBase
             hasClass("selected") || attr("checked").equals("true");
     }
     protected boolean enabled() {
-        if (hasClass("active"))
+        if (hasClass("active") || hasAttribute("enabled"))
             return true;
         if (hasClass("disabled") || hasAttribute("disabled"))
             return false;

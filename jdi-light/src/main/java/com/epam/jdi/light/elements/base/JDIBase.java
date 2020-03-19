@@ -24,7 +24,6 @@ import org.openqa.selenium.interactions.Actions;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import static com.epam.jdi.light.common.Exceptions.exception;
 import static com.epam.jdi.light.driver.WebDriverByUtils.*;
@@ -445,7 +444,7 @@ public abstract class JDIBase extends DriverBase implements IBaseElement, HasCac
         return driver;
     }
     private SearchContext getDefaultContext() {
-        return driver().switchTo().defaultContent();
+        return driver();//.switchTo().defaultContent();
     }
     private By correctLocator(By locator) {
         if (locator == null) return null;
