@@ -1,6 +1,7 @@
 package com.epam.jdi.light.elements.complex.dropdown;
 
 import com.epam.jdi.light.common.JDIAction;
+import com.epam.jdi.light.elements.common.UIElement;
 import com.epam.jdi.light.elements.complex.WebList;
 
 import java.util.List;
@@ -12,6 +13,10 @@ import java.util.List;
 public class Dropdown extends DropdownExpand {
     protected DropdownSelect ds() {
         return new DropdownSelect().setCore(DropdownSelect.class, base());
+    }
+    @Override
+    public UIElement iCore() {
+        return setupDone ? value() : ds().core();
     }
 
     @Override
@@ -28,7 +33,6 @@ public class Dropdown extends DropdownExpand {
             super.select(value);
         else ds().select(value);
     }
-
     /**
      * Select the specified element by the index
      * @param index
@@ -56,8 +60,13 @@ public class Dropdown extends DropdownExpand {
     }
 
     @Override
+    public String getText() {
+        return setupDone ? super.getText() : ds().getText();
+    }
+
+    @Override
     public String getValue() {
-        return setupDone ? super.getValue() : ds().getValue();
+        return getText();
     }
     @Override
     public void setValue(String value) {
@@ -70,16 +79,8 @@ public class Dropdown extends DropdownExpand {
         return setupDone ? super.size() : ds().size();
     }
 
-    @JDIAction("Check that '{name}' is displayed") @Override
+    @JDIAction("Check that '{name}' is displayed")
     public boolean isDisplayed() {
-        return setupDone ? super.isDisplayed() : ds().isDisplayed();
-    }
-    @JDIAction("Check that '{name}' is hidden") @Override
-    public boolean isHidden() {
-        return setupDone ? super.isHidden() : ds().isHidden();
-    }
-    @JDIAction("Check that '{name}' is displayed") @Override
-    public boolean isEnabled() {
-        return setupDone ? super.isEnabled() : ds().isEnabled();
+        return iCore().isDisplayed();
     }
 }
