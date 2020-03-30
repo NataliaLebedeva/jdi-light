@@ -1,4 +1,4 @@
-package appium.nativeApp;
+package appium.nativeApp.calculator;
 
 import com.epam.jdi.light.elements.init.PageFactory;
 import com.epam.jdi.light.elements.pageobjects.annotations.FindBy;
@@ -66,24 +66,6 @@ public class MainPage {
     public MainPage() {
         PageFactory.initElements(this);
     }
-
-//    public double calculate(double number1, double number2, Operations operation){
-//        try{
-//            switch (operation){
-//                case ADDITION:
-//                    break;
-//                case SUBTRACTION:
-//                    break;
-//                case MULTIPLICATION:
-//                    break;
-//                case DIVISION:
-//                    break;
-//            }
-//        } catch(Exception exc){
-//            exc.getMessage();
-//        }
-//        return 0;
-//    }
 
     public double addition() {
         digit_1.click();
