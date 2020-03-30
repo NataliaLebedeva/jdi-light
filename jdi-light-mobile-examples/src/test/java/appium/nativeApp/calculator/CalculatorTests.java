@@ -1,6 +1,5 @@
 package appium.nativeApp.calculator;
 
-import appium.nativeApp.MainPage;
 import org.testng.Assert;
 import org.testng.annotations.*;
 

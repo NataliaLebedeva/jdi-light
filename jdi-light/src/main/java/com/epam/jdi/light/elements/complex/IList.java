@@ -7,7 +7,7 @@ import com.epam.jdi.tools.func.JAction1;
 import com.epam.jdi.tools.func.JFunc1;
 import com.epam.jdi.tools.map.MultiMap;
 import com.epam.jdi.tools.pairs.Pair;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -121,11 +121,11 @@ public interface IList<T> extends IBaseElement, List<T>, HasValue, IHasSize {
     }
     @Override
     default boolean add(T t) {
-        throw new NotImplementedException();
+        throw new NotImplementedException("abc");
     }
     @Override
     default boolean remove(Object o) {
-        throw new NotImplementedException();
+        throw new NotImplementedException("abc");
     }
     @Override
     default boolean containsAll(Collection<?> c) {
@@ -133,19 +133,19 @@ public interface IList<T> extends IBaseElement, List<T>, HasValue, IHasSize {
     }
     @Override
     default boolean addAll(Collection<? extends T> c) {
-        throw new NotImplementedException();
+        throw new NotImplementedException("abc");
     }
     @Override
     default boolean addAll(int index, Collection<? extends T> c) {
-        throw new NotImplementedException();
+        throw new NotImplementedException("abc");
     }
     @Override
     default boolean removeAll(Collection<?> c) {
-        throw new NotImplementedException();
+        throw new NotImplementedException("abc");
     }
     @Override
     default boolean retainAll(Collection<?> c) {
-        throw new NotImplementedException();
+        throw new NotImplementedException("abc");
     }
     @Override
     default T get(int index) {
@@ -154,11 +154,11 @@ public interface IList<T> extends IBaseElement, List<T>, HasValue, IHasSize {
     }
     @Override
     default T set(int index, T element) {
-        throw new NotImplementedException();
+        throw new NotImplementedException("abc");
     }
     @Override
     default void add(int index, T element) {
-        throw new NotImplementedException();
+        throw new NotImplementedException("abc");
     }
     @Override
     default T remove(int index) {
